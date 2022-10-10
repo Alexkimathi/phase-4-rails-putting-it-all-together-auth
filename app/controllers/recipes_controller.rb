@@ -1,24 +1,19 @@
 class RecipesController < ApplicationController
     before_action :authorize
-
     def index
         user = User.find_by(id: session[:user_id])
         recipes = Recipe.all
         render json: recipes, status: :created
     end
-
     def create
         @user = User.find_by(id: session[:user_id])
         recipe = Recipe.create(recipe_params.merge(user_id: @user.id));
-        
-
         if recipe.valid?
             render json: recipe, status: :created
         else
             render json: {errors: recipe.errors.full_messages} , status: :unprocessable_entity
         end
     end
-
     private
     def recipe_params
         params.permit(:title, :instructions, :minutes_to_complete)
